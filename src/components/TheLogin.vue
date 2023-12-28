@@ -6,21 +6,59 @@
     <div class="card-body">
       <h5 class="card-title">Введите имя и пароль</h5>
       <div class="mb-3">
-        <label for="exampleFormControlInput1" class="form-label">Адрес электронной почты/логин/номер телефона</label>
-        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+        <label for="login" class="form-label">Адрес электронной почты/логин/номер телефона</label>
+        <input v-model="vLogin" type="text" class="form-control" id="login" placeholder="name@example.com">
       </div>
       <div class="mb-3">
-        <label for="exampleFormControlInput1" class="form-label">Пароль</label>
-        <input type="password" class="form-control" id="exampleFormControlInput1">
+        <label for="password" class="form-label">Пароль</label>
+        <input v-model="vPassword" type="password" class="form-control" id="password">
       </div>
-      <a href="#" class="btn btn-primary">Вход</a>
+      <a href="#" class="btn btn-primary" @click.prevent="login">Вход</a>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'TheLogin'
+  name: 'TheLogin',
+  data () {
+    return {
+      vLogin: null,
+      vPassword: null
+    }
+  },
+  methods: {
+    login() {
+      const login = this.vLogin
+      const password = this.vPassword
+      this.axios
+          .post('/api/auth/login', {username: login, password: password})
+          .then(res => {
+            console.log(res)
+            const user = {
+              name: res.data.username,
+              token: res.data.token,
+              issuedAt: res.data.issuedAt,
+              expiresAt: res.data.expiresAt,
+            }
+            localStorage.setItem('user', JSON.stringify(user))
+            alert("ok")
+          })
+    },
+    // logout() {
+    //   privateApi
+    //       .post('/api/auth/logout')
+    //       .then(() => {
+    //         const user = JSON.parse(localStorage.getItem('user'))
+    //         this.$emit('showAlert', `До встречи, ${user.name}`, 'info')
+    //         localStorage.removeItem('user')
+    //         this.getRegistration()
+    //       })
+    //       .catch(error => {
+    //         this.$emit('showAlert', error.response.data.error, 'warning')
+    //       })
+    // },
+  }
 }
 </script>
 
